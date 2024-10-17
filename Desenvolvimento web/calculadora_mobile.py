@@ -5,7 +5,7 @@
 from kivy.lang import Builder
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
-from kivy.app import MDApp
+from kivymd.app import MDApp
 from kivymd.uix.button import MDRaisedButton
 from kivymd.uix.textfield import MDTextField
 from kivy.metrics import dp
@@ -81,7 +81,7 @@ class CalculatorApp(BoxLayout):
         self.ids.input_field.text = new_text
 
     # Método chamado quando um operador é pressionado
-    def on_number_press(self, operator):
+    def on_operator_press(self, operator):
         current_text = self.ids.input_field.text
         new_text = f"{current_text}{operator}"
         self.ids.input_field.text = new_text
@@ -90,6 +90,36 @@ class CalculatorApp(BoxLayout):
     def clear_input(self):
         self.ids.input_field.text = ""
 
-    # Método...
+    # Método chamado para calcular o resultado da expressão
+    def calculate_result(self):
+        try:
+            result = eval(self.ids.input_field.text)
+            self.ids.input_field.text = str(result)
+        except Exception as e:
+            self.ids.input_field.text = "Erro"
 
-        # Parei as 13:06 do segundo video
+# Definindo a classe calculatorMDApp que herda de MDApp
+class CalculatorMDApp(MDApp):
+    # Método chamado para construir o aplicativo
+    def build(self):
+        return CalculatorApp()
+
+    # Método chamado para interagir com a instãncia de CalculatorApp
+    def on_number_press(self, number):
+        self.root.on_number_press(number)
+
+    def on_operator_press(self, operator):
+        self.root.on_operator_press(operator)
+    
+    def clear_input(self):
+        self.root.clear_input()
+
+    def calculate_result(self):
+        self.root.calculate_result()
+
+# Verificando se o script está sendo executado diretamente
+if __name__ == "__main__":
+    # Carregando a string KV usando Builder
+    Builder.load_string(kv)
+    # iniciando o aplicativo MD
+    CalculatorMDApp().run()
